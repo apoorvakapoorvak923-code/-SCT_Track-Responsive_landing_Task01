@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixed Navigation Demo</title>
+  <style>
+    :root {
+      --bg: #0f1114;
+      --text: #f2f2f2;
+      --accent: #37c6a2;
+      --muted: rgba(255,255,255,0.7);
+      --header-height: 72px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    /* === HEADER / NAVIGATION === */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 0;
+      background: transparent;
+      transition: background 0.3s, padding 0.3s, box-shadow 0.3s;
+      z-index: 1000;
+    }
+    .site-header.scrolled {
+      background: rgba(15, 17, 20, 0.95);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      padding: 10px 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      gap: 24px;
+    }
+
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .nav-link:hover {
+      color: var(--accent);
+      transform: translateY(-3px);
+    }
+    .nav-link.active {
+      color: var(--accent);
+      font-weight: bold;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    /* === CONTENT SECTIONS === */
+    section {
+      min-height: 100vh;
+      padding: 100px 20px 40px; /* padding-top accounts for fixed nav */
+    }
+    #home { background: #222; }
+    #about { background: #333; }
+    #services { background: #444; }
+    #contact { background: #555; }
+
+    h1, h2 { margin-bottom: 16px; }
+    p { max-width: 600px; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header" id="site-header">
+    <div class="container">
+      <a href="#" class="logo">MySite</a>
+      <ul class="nav-list">
+        <li><a href="#home" class="nav-link active">Home</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#services" class="nav-link">Services</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section id="home">
+      <h1>Home</h1>
+      <p>Welcome to the homepage. Scroll down to see the nav bar change.</p>
+    </section>
+    <section id="about">
+      <h2>About</h2>
+      <p>This is the About section.</p>
+    </section>
+    <section id="services">
+      <h2>Services</h2>
+      <p>This is the Services section.</p>
+    </section>
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>This is the Contact section.</p>
+    </section>
+  </main>
+
+  <script>
+    // Select elements
+    const header = document.getElementById('site-header');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('main section[id]');
+
+    // 1) Change header style on scroll
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // 2) Highlight active nav item while scrolling
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const id = entry.target.getAttribute('id');
+        const link = document.querySelector(`.nav-link[href="#${id}"]`);
+        if (entry.isIntersecting) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.6 });
+    sections.forEach(section => observer.observe(section));
+  </script>
+
+</body>
+</html>
